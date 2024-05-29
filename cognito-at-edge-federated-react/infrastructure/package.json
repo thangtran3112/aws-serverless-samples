@@ -1,0 +1,45 @@
+{
+  "name": "federated-infrastructure",
+  "version": "0.1.0",
+  "bin": {
+    "infrastructure": "bin/infrastructure.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "test:ci": "jest --ci --testResultsProcessor=\"jest-junit\"",
+    "cdk": "cdk",
+    "lint": "eslint \"**/*.ts\"",
+    "lint:fix": "eslint \"**/*.ts\" --fix"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.89",
+    "@types/jest": "^27.0.3",
+    "@types/jsonwebtoken": "^8.5.6",
+    "@types/jwk-to-pem": "^2.0.1",
+    "@types/node": "^17.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "aws-cdk": "^1.137.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-jest": "^25.3.2",
+    "jest": "^27.4.5",
+    "jest-junit": "^13.0.0",
+    "ts-jest": "^27.1.2",
+    "ts-node": "^10.4.0",
+    "typescript": "~4.5.4"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.0.0",
+    "constructs": "^10.0.0",
+    "@aws-sdk/client-ssm": "^3.45.0",
+    "aws-lambda": "^1.0.7",
+    "axios": "0.24.0",
+    "cognito-at-edge": "^1.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.5",
+    "jwks-rsa": "^2.0.5",
+    "source-map-support": "^0.5.21"
+  }
+}
