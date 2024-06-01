@@ -44,6 +44,7 @@ This pattern includes an example Angular website just to highlight how an s3 web
 There are scripts provided for both Windows and Linux machines. To start the deployment process:
 
 - run `chmod +x ./BuildAndDeploy.sh`
+- IMPORTANT: Lambda NodeJS 18.x or above, does no longer include `aws-sdk`. This code base does not migrate to use [@aws-sdk/client-secrets-manager](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/secrets-manager/command/GetSecretValueCommand/) yet, therefore we have to include `aws-sdk` v2 into lambda dependencies. See `viewerRequest` and `originRequest` packages for more information. It is better to migrate to next version of @aws-sdk/client-secrets-manager.
 
 ### Deploy the pre-stack (Secrets Manager)
 
@@ -53,7 +54,7 @@ After building the project, the script will deploy an AWS Secrets Manager called
 
 ### Deploy the Main Stack
 
-After you have updated the secret, the script should be waiting for your input. Go back to your terminal and enter `Y` and hit enter. The script will then take roughly 10 minutes to deploy the full solution.
+- After you have updated the secret, the script should be waiting for your input. Go back to your terminal and enter `Y` and hit enter. The script will then take roughly 10 minutes to deploy the full solution.
 
 ### View HostedUI
 
