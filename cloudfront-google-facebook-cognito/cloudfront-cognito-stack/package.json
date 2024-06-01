@@ -27,7 +27,7 @@
     "cdk-nag": "^2.28.130",
     "constructs": "^10.3.0",
     "cookie": "^0.6.0",
-    "jose": "^4.11.2",
+    "jose": "^5.3.0",
     "ngx-cookie-service": "15.0.0"
   }
 }
