@@ -8,9 +8,6 @@
     },
     {
       "path": "cognito-at-edge-federated-react"
-    },
-    {
-      "path": "cognito-at-edge"
     }
   ],
   "settings": {}
