@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": "./cloudfront-google-facebook-cognito"
+    },
+    {
+      "path": "cloudfront-authorization-at-edge"
+    },
+    {
+      "path": "cognito-at-edge-federated-react"
+    },
+    {
+      "path": "cognito-at-edge"
+    }
+  ],
+  "settings": {}
+}

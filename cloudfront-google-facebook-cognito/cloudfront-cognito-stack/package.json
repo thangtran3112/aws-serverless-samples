@@ -20,8 +20,9 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.588.0",
     "aws-cdk-lib": "^2.142.0",
-    "aws-sdk": "^2.1316.0",
+    "aws-sdk": "^2.1632.0",
     "axios": "^1.6.0",
     "cdk-nag": "^2.28.130",
     "constructs": "^10.3.0",
