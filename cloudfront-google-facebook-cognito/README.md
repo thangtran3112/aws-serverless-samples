@@ -49,7 +49,7 @@ There are scripts provided for both Windows and Linux machines. To start the dep
 
 There is a provided script called `BuildAndDeploy` for deploying the entire stack. To build and deploy, simply run `./BuildAndDeploy.sh all`. This make command will run `npm i` in all of the lambda directories to ensure their dependencies are present before deploying. It will also build the static site, built in angular, by running `ng build --configuration=production`.
 
-After building the project, the script will deploy an AWS Secrets Manager called `thirdPartyProviders`. This secret contains client credentials for Amazon Cognito to use to authenticate users with their Facebook or Google credentials. If you want this feature supported, you will need to generate client credentials with these providers and then update the secret values within AWS Secrets Manager. Instructions on how to generate credentials can be found here: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-configuring-federation-with-social-idp.html
+After building the project, the script will deploy an AWS Secrets Manager called `thirdPartyProviders` or `THIRD_PARTY_IDPROVIDER_SECRET_NAME. This secret contains client credentials for Amazon Cognito to use to authenticate users with their Facebook or Google credentials. If you want this feature supported, you will need to generate client credentials with these providers and then update the secret values within AWS Secrets Manager. Instructions on how to generate credentials can be found here: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-configuring-federation-with-social-idp.html
 
 ### Deploy the Main Stack
 
