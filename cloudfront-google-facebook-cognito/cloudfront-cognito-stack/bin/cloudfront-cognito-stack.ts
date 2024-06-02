@@ -4,7 +4,7 @@ import { InfrastructureStack } from "../lib/InfrastructureStack";
 
 const app = new cdk.App();
 
-new InfrastructureStack(app, "Test-InfrastructureStack", {
+new InfrastructureStack(app, "Angular-InfrastructureStack", {
   env: {
     region: "us-east-1",
   },
