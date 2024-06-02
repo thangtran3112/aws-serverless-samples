@@ -1,0 +1,14 @@
+{
+  "name": "premium_endpoint",
+  "version": "1.0.0",
+  "description": "",
+  "main": "addPremiumUser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1632.0"
+  }
+}
