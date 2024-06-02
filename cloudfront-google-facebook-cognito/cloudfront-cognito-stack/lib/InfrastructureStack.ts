@@ -28,11 +28,11 @@ import { CfnWebACLAssociation } from "aws-cdk-lib/aws-wafv2";
 import { HttpStatusCode } from "axios";
 
 export class InfrastructureStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+  constructor(scope: Construct, infraId: string, props?: cdk.StackProps) {
+    super(scope, infraId, props);
 
     // Lambda@edge handlers start//
-    const lambdaRole = new iam.Role(this, "EdgeFunctionRole", {
+    const lambdaRole = new iam.Role(this, `${infraId}-EdgeFunctionRole`, {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
     });
 
@@ -73,18 +73,19 @@ export class InfrastructureStack extends cdk.Stack {
     // Lambda@edge handlers end//
 
     // ------------------- Static chat app site cdk start -------------------
-    const staticSiteBucket = new Bucket(this, "staticSiteBucket", {
+    const staticSiteBucket = new Bucket(this, `${infraId}-staticSiteBucket`, {
       versioned: true,
       encryption: BucketEncryption.S3_MANAGED,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
     });
 
-    new s3deploy.BucketDeployment(this, "DeployWebsite", {
+    new s3deploy.BucketDeployment(this, `${infraId}-DeployWebsite`, {
       sources: [s3deploy.Source.asset("static-site/dist/static-site")],
+      // sources: [s3deploy.Source.asset("react-app/build")],
       destinationBucket: staticSiteBucket,
     });
 
-    const oia = new OriginAccessIdentity(this, "OIA", {
+    const oia = new OriginAccessIdentity(this, `${infraId}-OIA`, {
       comment: "Created by CDK for static site",
     });
 
@@ -93,7 +94,7 @@ export class InfrastructureStack extends cdk.Stack {
 
     // AWS WAF Start //
 
-    const cfnWebACL = new wafv2.CfnWebACL(this, "MyCDKWebAcl", {
+    const cfnWebACL = new wafv2.CfnWebACL(this, `${infraId}-MyCDKWebAcl`, {
       defaultAction: {
         allow: {},
       },
@@ -103,7 +104,7 @@ export class InfrastructureStack extends cdk.Stack {
         metricName: "MetricForWebACLCDK",
         sampledRequestsEnabled: true,
       },
-      name: "MyCDKWebAcl",
+      name: `${infraId}-MyCDKWebAcl`,
       rules: [
         {
           name: "CRSRule",
@@ -174,8 +175,8 @@ export class InfrastructureStack extends cdk.Stack {
 
     // AWS Cognito Start //
 
-    const userPool = new cognito.UserPool(this, "userpool", {
-      userPoolName: "example-user-pool",
+    const userPool = new cognito.UserPool(this, `${infraId}-userpool`, {
+      userPoolName: `${infraId}-example-user-pool`,
       selfSignUpEnabled: true,
       signInAliases: {
         email: true,
@@ -240,7 +241,7 @@ export class InfrastructureStack extends cdk.Stack {
 
     // AWS Cognito End //
 
-    const secret = new secretsmanager.Secret(this, "Secret", {
+    const secret = new secretsmanager.Secret(this, `${infraId}-Secret`, {
       secretName: "cognitoClientSecrets",
       secretObjectValue: {
         ClientID: SecretValue.unsafePlainText(userPoolClient.userPoolClientId),
@@ -262,20 +263,24 @@ export class InfrastructureStack extends cdk.Stack {
     //Google and Facebook IDP start //
     const providerAttribute = cognito.ProviderAttribute;
     const userPoolIdentityProviderFacebook =
-      new cognito.UserPoolIdentityProviderFacebook(this, "FacebookIDP", {
-        clientId: thirdPardyIdsSecret
-          .secretValueFromJson("FacebookAppId")
-          .unsafeUnwrap(),
-        clientSecret: thirdPardyIdsSecret
-          .secretValueFromJson("FacebookAppSecret")
-          .unsafeUnwrap(),
-        userPool: userPool,
-        attributeMapping: {
-          givenName: providerAttribute.FACEBOOK_FIRST_NAME,
-          familyName: providerAttribute.FACEBOOK_LAST_NAME,
-          email: providerAttribute.FACEBOOK_EMAIL,
-        },
-      });
+      new cognito.UserPoolIdentityProviderFacebook(
+        this,
+        `${infraId}-FacebookIDP`,
+        {
+          clientId: thirdPardyIdsSecret
+            .secretValueFromJson("FacebookAppId")
+            .unsafeUnwrap(),
+          clientSecret: thirdPardyIdsSecret
+            .secretValueFromJson("FacebookAppSecret")
+            .unsafeUnwrap(),
+          userPool: userPool,
+          attributeMapping: {
+            givenName: providerAttribute.FACEBOOK_FIRST_NAME,
+            familyName: providerAttribute.FACEBOOK_LAST_NAME,
+            email: providerAttribute.FACEBOOK_EMAIL,
+          },
+        }
+      );
 
     const userPoolIdentityProviderGoggle =
       new cognito.UserPoolIdentityProviderGoogle(this, "GoogleIDP", {
@@ -313,9 +318,9 @@ export class InfrastructureStack extends cdk.Stack {
     // Add Lambda function that will add user to the premium group
     const addPremiumUserFunction = new lambda.Function(
       this,
-      "addPremiumUserFunction",
+      `${infraId}-addPremiumUserFunction`,
       {
-        runtime: lambda.Runtime.NODEJS_16_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
         handler: "addPremiumUser.handler",
         code: lambda.Code.fromAsset("lambda/premium_endpoint"),
         environment: {
@@ -338,7 +343,7 @@ export class InfrastructureStack extends cdk.Stack {
       })
     );
 
-    const apiGwWebAcl = new wafv2.CfnWebACL(this, "ApiGwAcl", {
+    const apiGwWebAcl = new wafv2.CfnWebACL(this, `${infraId}-ApiGwAcl`, {
       defaultAction: {
         allow: {},
       },
@@ -371,23 +376,27 @@ export class InfrastructureStack extends cdk.Stack {
     });
 
     // Create api gateway with the lambda function as the endpoint
-    const api = new apigw.LambdaRestApi(this, "AddUserToPremiumEndpoint1", {
-      handler: addPremiumUserFunction,
-      proxy: false,
-      defaultCorsPreflightOptions: {
-        allowOrigins: [`https://${cfDistro.distributionDomainName}`],
-        allowHeaders: ["*"],
-        allowMethods: ["POST"],
-      },
-      defaultMethodOptions: {
-        authorizationType: apigw.AuthorizationType.IAM,
-      },
-    });
+    const api = new apigw.LambdaRestApi(
+      this,
+      `${infraId}-AddUserToPremiumEndpoint1`,
+      {
+        handler: addPremiumUserFunction,
+        proxy: false,
+        defaultCorsPreflightOptions: {
+          allowOrigins: [`https://${cfDistro.distributionDomainName}`],
+          allowHeaders: ["*"],
+          allowMethods: ["POST"],
+        },
+        defaultMethodOptions: {
+          authorizationType: apigw.AuthorizationType.IAM,
+        },
+      }
+    );
     api.root.addMethod("POST");
 
     const apiWebAclAssociation = new CfnWebACLAssociation(
       this,
-      "ApiWebAclAssociation",
+      `${infraId}-ApiWebAclAssociation`,
       {
         resourceArn: api.deploymentStage.stageArn,
         webAclArn: apiGwWebAcl.attrArn,
