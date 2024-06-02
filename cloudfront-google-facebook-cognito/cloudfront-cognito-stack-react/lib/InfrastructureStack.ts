@@ -59,16 +59,6 @@ export class InfrastructureStack extends cdk.Stack {
         role: lambdaRole,
       }
     );
-    const originRequest = new cloudfront.experimental.EdgeFunction(
-      this,
-      "originRequest",
-      {
-        runtime: lambda.Runtime.NODEJS_18_X,
-        handler: "originRequest.handler",
-        code: lambda.Code.fromAsset("lambda/originRequest"),
-        role: lambdaRole,
-      }
-    );
 
     // Lambda@edge handlers end//
 
@@ -80,8 +70,7 @@ export class InfrastructureStack extends cdk.Stack {
     });
 
     new s3deploy.BucketDeployment(this, `${infraId}-DeployWebsite`, {
-      sources: [s3deploy.Source.asset("static-site/dist/static-site")],
-      // sources: [s3deploy.Source.asset("react-app/build")],
+      sources: [s3deploy.Source.asset("static-site/build")],
       destinationBucket: staticSiteBucket,
     });
 
@@ -157,10 +146,6 @@ export class InfrastructureStack extends cdk.Stack {
             functionVersion: viewerRequest.currentVersion,
             eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
           },
-          {
-            functionVersion: originRequest.currentVersion,
-            eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-          },
         ],
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       },
@@ -221,7 +206,9 @@ export class InfrastructureStack extends cdk.Stack {
         },
         scopes: [cognito.OAuthScope.EMAIL],
         callbackUrls: [
-          `https://${cfDistro.distributionDomainName}/login`,
+          // `https://${cfDistro.distributionDomainName}/login`,
+          `https://${cfDistro.distributionDomainName}`,
+          "http://localhost:3000",
           `https://${cfDistro.distributionDomainName}/index.html`,
         ],
       },

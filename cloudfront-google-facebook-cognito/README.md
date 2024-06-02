@@ -56,6 +56,8 @@ After building the project, the script will deploy an AWS Secrets Manager called
 
 - After you have updated the secret, the script should be waiting for your input. Go back to your terminal and enter `Y` and hit enter. The script will then take roughly 10 minutes to deploy the full solution.
 
+- IMPORTANT: The Web App inside `cloudfront-cognito-stack-react` does not persist cookie yet. Further work is needed to persist cookies on React app
+
 ### View HostedUI
 
 Navigate to Cloudfront and grab the domain name listed next to your distribution. You should be redirected to a URL like: `https://example.auth.us-east-1.amazoncognito.com/login?response_type=code&client_id…` This is your hosted_UI and you can now begin signing up, logging in and checking JWT tokens!
@@ -74,7 +76,7 @@ Once you have a user added to your User Pool, you can add that user to a premium
 
 This solution includes an example angular static website, hosted in s3 behind cloudfront. The website code is stored under `cloudfront-cognito-stack/static-site`. If you want to use your own code, you need to do a few things:
 
-- Within BuildAndDeploy scripts, edit the website path and any build commands needed.
+- Within BuildAndDeploy scripts, edit the website path and any build commands needed. For instance, with Angular, you will need to edit `ng build --configuration=production`, while with React, you will need to edit `npm run build`.
 
 - Within `cloudfront-cognito-stack/lib/InfrastructureStack.ts`, you will need to edit the `s3deploy.BucketDeployment` source to be where your website compiled code lives. There are comments within this file that specify how to do this.
 
