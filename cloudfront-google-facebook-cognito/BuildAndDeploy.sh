@@ -18,6 +18,7 @@ build() {
 
   cd ../../static-site
   npm i
+  # npm run build
   ng build --configuration=production
   cd ../..
 }
