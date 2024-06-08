@@ -2,12 +2,12 @@
   "name": "@aws-samples/backend-api",
   "private": true,
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.363.0",
-    "@aws-sdk/client-sqs": "^3.363.0",
-    "@aws-sdk/lib-dynamodb": "^3.100.0",
+    "@aws-sdk/client-dynamodb": "^3.592.0",
+    "@aws-sdk/client-sqs": "^3.592.0",
+    "@aws-sdk/lib-dynamodb": "^3.592.0",
     "@codegenie/serverless-express": "^4.14.1",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.2",
     "uuid": "^8.3.2"
   },
   "scripts": {
@@ -21,9 +21,9 @@
     "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "^20.14.2",
     "@types/uuid": "^8.3.4",
-    "esbuild": "^0.14.36",
+    "esbuild": "^0.21.4",
     "ts-node-dev": "^2.0.0",
-    "tsconfig-paths": "^3.14.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   }
 }
