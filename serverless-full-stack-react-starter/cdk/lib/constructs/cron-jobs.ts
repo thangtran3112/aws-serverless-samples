@@ -23,7 +23,7 @@ export class CronJobs extends Construct {
         cmd: ['handler-cron-job.handler'],
         platform: Platform.LINUX_AMD64,
       }),
-      memorySize: 256,
+      memorySize: 512,
       environment: {
         TABLE_NAME: database.tableName,
         JOB_QUEUE_NAME: jobQueue.queueName,
