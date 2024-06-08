@@ -28,13 +28,13 @@ export class AsyncJob extends Construct {
         cmd: ['handler-job.handler'],
         platform: Platform.LINUX_AMD64,
       }),
-      memorySize: 256,
+      memorySize: 512,
       timeout: visibilityTimeout,
       environment: {
         TABLE_NAME: database.tableName,
       },
-      // limit concurrency to mitigate any possible EDoS attacks 
-      reservedConcurrentExecutions: 1,
+      // limit concurrency to mitigate any possible EDoS attacks
+      // reservedConcurrentExecutions: 10,
     });
 
     database.grantReadWriteData(handler);
