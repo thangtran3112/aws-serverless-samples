@@ -1,13 +1,19 @@
 {
   "folders": [
     {
-      "path": "./cloudfront-google-facebook-cognito"
-    },
-    {
       "path": "cloudfront-authorization-at-edge"
     },
     {
       "path": "cognito-at-edge-federated-react"
+    },
+    {
+      "path": "serverless-full-stack-react-starter"
+    },
+    {
+      "path": "websocket-api-cognito-auth-sample"
+    },
+    {
+      "path": "angular-cloudfront-google-cognito"
     }
   ],
   "settings": {}
