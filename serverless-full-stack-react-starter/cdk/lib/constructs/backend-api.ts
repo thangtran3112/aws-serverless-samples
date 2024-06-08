@@ -25,7 +25,7 @@ export class BackendApi extends Construct {
 
     const handler = new DockerImageFunction(this, 'Handler', {
       code: DockerImageCode.fromImageAsset('../backend', { platform: Platform.LINUX_AMD64 }),
-      memorySize: 256,
+      memorySize: 512,
       timeout: Duration.seconds(30),
       environment: {
         TABLE_NAME: database.tableName,
@@ -42,7 +42,7 @@ export class BackendApi extends Construct {
         cmd: ['handler-public.handler'],
         platform: Platform.LINUX_AMD64,
       }),
-      memorySize: 256,
+      memorySize: 512,
       timeout: Duration.seconds(30),
       environment: {
         TABLE_NAME: database.tableName,
