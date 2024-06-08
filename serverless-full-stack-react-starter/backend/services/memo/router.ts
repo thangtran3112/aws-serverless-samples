@@ -1,11 +1,11 @@
 import express from 'express';
-import { wrap } from '../../common/express';
-import * as c from './controller';
+import { asyncHandler } from '../../common/express';
+import * as memoController from './controller';
 
 const router = express.Router();
-router.get('/', wrap(c.getMemos));
-router.post('/', wrap(c.createMemo));
-router.post('/delete', wrap(c.deleteMemo));
-router.post('/run', wrap(c.runSampleJob));
+router.get('/', asyncHandler(memoController.getMemos));
+router.post('/', asyncHandler(memoController.createMemo));
+router.post('/delete', asyncHandler(memoController.deleteMemo));
+router.post('/run', asyncHandler(memoController.runSampleJob));
 
 export default router;

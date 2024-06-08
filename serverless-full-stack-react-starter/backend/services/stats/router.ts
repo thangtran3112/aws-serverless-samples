@@ -1,9 +1,9 @@
 import express from 'express';
-import { wrap } from '../../common/express';
-import * as c from './controller';
+import { asyncHandler } from '../../common/express';
+import * as statsController from './controller';
 
 const router = express.Router();
 
-router.get('/', wrap(c.getStats));
+router.get('/', asyncHandler(statsController.getStats));
 
 export default router;
