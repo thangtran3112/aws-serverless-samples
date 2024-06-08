@@ -1,14 +1,33 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk/client-apigatewaymanagementapi";
+import { unmarshall } from "@aws-sdk/util-dynamodb";
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const ConnectionTableName = process.env.CONNECTION_TABLE_NAME!;
 
-export const handler: APIGatewayProxyHandler = async (event, context) => {
+export const getAllConnectionIds = async (): Promise<string[]> => {
+  const input = {
+    ExpressionAttributeNames: {
+      "#ConnectionId": "connectionId",
+      "#UserId": "userId",
+    },
+    ProjectionExpression: "#ConnectionId, #UserId",
+    TableName: ConnectionTableName,
+  };
+  const command = new ScanCommand(input);
+  const response = await client.send(command);
+  if (!response || !response.Items) return [];
+  const jsonItems = response.Items.map((i) => unmarshall(i));
+  console.log(`Get all Connection Ids: ${JSON.stringify(jsonItems)}`);
+  // [{ connectionId: 'id1', userId: 'userId1' }, { connectionId: 'id2', userId: 'userId2' }]
+  return jsonItems.map((item) => item.connectionId) as string[];
+};
+
+export const handler: APIGatewayProxyHandler = async (event, _context) => {
   console.log(event);
   const routeKey = event.requestContext.routeKey!;
   const connectionId = event.requestContext.connectionId!;
@@ -52,24 +71,36 @@ export const handler: APIGatewayProxyHandler = async (event, context) => {
   const managementApi = new ApiGatewayManagementApiClient({
     endpoint,
   });
+  const allConnectionIds = await getAllConnectionIds();
+  //some connections may have been disconnected in the meantime, there could be GoneException
+  for (const conId of allConnectionIds) {
+    if (conId != connectionId) await postMessage(managementApi, conId, event.body!);
+  }
 
+  return { statusCode: 200, body: "Received." };
+};
+
+/**
+ * This experiment succeeds in sending message to multiple subscribers
+ * But it needs further refinement to avoid sending duplicate messages to the same subscriber
+ * @TODO In order to avoid duplicate messages, we need check the origin connectionId of each message
+ */
+const postMessage = async (managementApi: ApiGatewayManagementApiClient, connectionId: string, message: string) => {
   try {
     await managementApi.send(
       new PostToConnectionCommand({
         ConnectionId: connectionId,
-        Data: Buffer.from(JSON.stringify({ message: event.body }), "utf-8"),
+        Data: Buffer.from(JSON.stringify({ message: message }), "utf-8"),
       }),
     );
   } catch (e: any) {
-    if (e.statusCode == 410) {
+    if (e.statusCode == 410 || e.$metadata?.httpStatusCode == 410 || e.name === "GoneException") {
       await removeConnectionId(connectionId);
     } else {
       console.log(e);
       throw e;
     }
   }
-
-  return { statusCode: 200, body: "Received." };
 };
 
 const removeConnectionId = async (connectionId: string) => {
