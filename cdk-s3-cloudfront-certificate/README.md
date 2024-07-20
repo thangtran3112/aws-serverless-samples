@@ -28,4 +28,8 @@ cdk bootstrap
 cdk deploy --all
 ```
 
-- Make sure to update Route53 DNS to make sure the certificate is validated
+- Make sure to update Route53 DNS to make sure the certificate is validated during cdk deployment
+
+## Testing
+
+- Use the html contents inside [sample](./sample/) for testing cloudfront url

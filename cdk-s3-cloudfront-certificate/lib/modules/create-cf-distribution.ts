@@ -23,7 +23,6 @@ export class CreateCFDistribution {
 
   constructor(scope: Construct, props: StackProps) {
     const ROOT_INDEX_FILE = "index.html";
-    const PROD_FOLDER = props.domainName;
     this.cfDist = new CloudFrontWebDistribution(
       scope,
       props.cfDistributionName,
@@ -41,7 +40,6 @@ export class CreateCFDistribution {
             s3OriginSource: {
               originAccessIdentity: props.accessIdentity,
               s3BucketSource: props.siteBucket,
-              originPath: `/${PROD_FOLDER}`,
             },
             behaviors: [
               {
