@@ -12,6 +12,14 @@ AWS_ACCOUNT_NUMBER=YOUR_AWS_ACCOUNT_NUMBER
 AWS_ACCOUNT_REGION=YOUR_REGION (us-east-1, eu-north-1, etc.)
 ```
 
+- Create file under [lib/config folder](./lib/config/) with name as `certificate-arns.json`, with the placeholder content:
+
+```json
+{
+  <YOUR_DOMAIN_NAME>: "a temporary arn string"
+}
+```
+
 - Deployments:
 
 ```bash

@@ -2,10 +2,10 @@ import { CfnOutput, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { CreateS3 } from "./modules/create-s3";
 import { ConfigureAccessPolicyS3 } from "./modules/configure-access-policy-s3";
-import { WEBSITES } from "./config/websites";
 import { CreateCFDistribution } from "./modules/create-cf-distribution";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { GetCertificate } from "./modules/get-certificate";
+import { WEBSITES } from "./config/websites";
 
 export class CdkS3CloudfrontFrontendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
