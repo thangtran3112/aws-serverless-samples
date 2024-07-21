@@ -2,6 +2,7 @@
 import * as cdk from "aws-cdk-lib";
 import { CdkS3CloudfrontFrontendStack } from "../lib/cdk-s3-cloudfront-frontend-stack";
 import { UsEastCertificateStack } from "../lib/us-east-certificate-stack";
+import { EcsWithEc2LaunchTypeStack } from "../lib/ecs-launch-type-ec2-stack";
 require("dotenv").config();
 
 const app = new cdk.App();
@@ -11,6 +12,12 @@ new UsEastCertificateStack(app, "UsEastCertificateStack", {
 });
 
 new CdkS3CloudfrontFrontendStack(app, "CdkS3CloudfrontFrontendStack", {
+  env: {
+    region: process.env.AWS_ACCOUNT_REGION,
+  },
+});
+
+new EcsWithEc2LaunchTypeStack(app, "EcsLaunchEc2Stack", {
   env: {
     region: process.env.AWS_ACCOUNT_REGION,
   },
