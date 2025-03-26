@@ -8,7 +8,7 @@ Amplify.configure({
     Events: {
       endpoint: import.meta.env.VITE_API_ENDPOINT,
       region: "us-west-2",
-      defaultAuthMode: "apiKey",
+      defaultAuthMode: "apiKey", // 'apiKey' | 'oidc' | 'userPool' | 'iam' | 'identityPool' | 'lambda' | 'none'
       apiKey: import.meta.env.VITE_API_KEY,
     },
   },
@@ -18,6 +18,7 @@ type Event = {
   event: {
     kind: "status" | "message";
     text: string;
+    id?: string;
     author?: {
       id: string;
       name: string;
@@ -45,15 +46,22 @@ const ChatApp = () => {
   useEffect(() => {
     let channel: EventsChannel;
 
+    //get authToken from cognito or using cookie with lambda authorizer
+    // If we get auth token from cognito, we can use it to subscribe to the channel
+
     const connectAndSubscribe = async () => {
       channel = await events.connect(`chat${chatRoom}`);
 
-      channel.subscribe({
-        next: (data: Event) => {
-          setMessages((prev) => [...prev, data]);
-        },
-        error: (err) => console.error("error", err),
-      });
+      channel.subscribe(
+        {
+          next: (data: Event) => {
+            setMessages((prev) => [...prev, data]);
+          },
+          error: (err) => console.error("error", err),
+        }
+        // { authToken: "CUSTOM Auth Token for Lambda Authrorizer for custom business logic" },
+        // { authMode: "userPool" }
+      );
     };
 
     connectAndSubscribe();
@@ -141,7 +149,7 @@ const ChatApp = () => {
         {messages.map((message) =>
           message.event.kind === "message" ? (
             <Bubble
-              key={message.id}
+              key={message.event.id}
               author={message.event.author!.name}
               isSelf={user.id === message.event.author!.id}
               text={message.event.text}
