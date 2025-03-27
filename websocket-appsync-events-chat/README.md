@@ -22,7 +22,7 @@ Amplify.configure({
 ## Authentication with custom business logic
 
 - Use `Lambda Authorizer`. [Read this instruction](https://aws.amazon.com/blogs/mobile/appsync-lambda-auth/)
-- If we get auth token from cognito, we can use it to subscribe to the channel through:
+- Pass the Cookies or JWT token received from backend to connect method belows
 
 ```ts
 channel = await events.connect(`chat${chatRoom}`, { authToken: "SomeToken" });
@@ -38,3 +38,7 @@ channel.subscribe(
   // { authMode: "userPool" }
 );
 ```
+
+## Request for Cognito JWT token from Backend
+
+- Use `AdminInitiateAuth` flow to request a user cognito token
